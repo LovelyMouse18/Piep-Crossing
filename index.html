@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PiepCrossing.com</title>
 <meta name="description" content="Guide Piep, the little mouse, across busy roads and a rushing river, dodging cats and snakes while hopping across dhow boats, collecting gems and dates, and racing the timer to reach every safe home burrow.">
-<link rel="canonical" href="index.html">
+<link rel="canonical" href="https://piepcrossing.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PiepCrossing.com">
 <meta property="og:title" content="PiepCrossing.com">
@@ -31,11 +31,11 @@
 <meta name="twitter:description" content="Guide Piep, the little mouse, across busy roads and a rushing river, dodging cats and snakes while hopping across dhow boats, collecting gems and dates, and racing the timer to reach every safe home burrow.">
 <meta name="twitter:image" content="https://piepcrossing.com/piep_crossing_social.jpg">
 <meta name="twitter:image:alt" content="Piep the little mouse crossing roads and water in Oman with cats, snakes, dhow boats, and a Khanjar.">
-<link rel="icon" href="https://piepcrossing.com/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="manifest" href="https://piepcrossing.com/site.webmanifest">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#2d1b4e">
 <link rel="preload" as="image" href="piep_crossing.webp">
 <link rel="preload" as="image" href="piep_crossing_paused_01.webp">
@@ -1523,7 +1523,7 @@
             </svg>
             <span>Share</span>
           </button>
-          <a id="shareXBtn" class="share-btn" href="index.html#" target="_blank" rel="noopener" title="Post score on X">
+          <a id="shareXBtn" class="share-btn" href="#" target="_blank" rel="noopener" title="Post score on X">
             <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.657l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
             </svg>
@@ -1582,6 +1582,7 @@
   const KHANJAR_COOLDOWN = 0.55;
   const KHANJAR_ATTACK_TIME = 0.28;
   const KHANJAR_HINT_DURATION = 5;
+  const KHANJAR_USE_TIP_INTERVAL = 7;
   const TIP_DURATION = 5;
   const SHOP_SHIELD_COST = 4;
   const SHOP_SHIELD_TIME = 8;
@@ -2844,8 +2845,12 @@
     if (!spendDates(KHANJAR_DATE_COST)) return;
     state.khanjarOwned = true;
     state.khanjarKillTipCooldown = 0;
-    state.khanjarKillTipVariant = 1;
-    if (state.cats.length) showCanvasTip('Double Tap to strike with the Khanjar', 4.2, '#ffd700', 'normal');
+    state.khanjarKillTipVariant = 0;
+    if (state.cats.length) {
+      showCanvasTip('Double Tap Piep or a cat to strike with the Khanjar', 5, '#ffd700', 'normal');
+      state.khanjarKillTipCooldown = KHANJAR_USE_TIP_INTERVAL;
+      state.khanjarKillTipVariant = 1;
+    }
     playShield();
     if (state.piep) sparkleBurst(state.piep.x, state.piep.y, '#ffd84a');
     updateHud(true);
@@ -3785,13 +3790,14 @@
     state.khanjarKillTipCooldown = Math.max(0, (state.khanjarKillTipCooldown || 0) - dt);
     if (state.khanjarKillTipCooldown <= 0 && !state.tip) {
       const tips = [
+        'Double Tap Piep or a cat to strike with the Khanjar',
         'Use the Khanjar to kill cats',
         'Double Tap to strike with the Khanjar'
       ];
       const tip = tips[state.khanjarKillTipVariant % tips.length];
       state.khanjarKillTipVariant += 1;
-      showCanvasTip(tip, 4.2, '#ffd700', 'normal');
-      state.khanjarKillTipCooldown = 11;
+      showCanvasTip(tip, 4.6, '#ffd700', 'normal');
+      state.khanjarKillTipCooldown = KHANJAR_USE_TIP_INTERVAL;
     }
   }
 
